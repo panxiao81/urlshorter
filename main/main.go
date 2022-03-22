@@ -5,22 +5,26 @@ import (
 	"fmt"
 	"github.com/panxiao81/urlshorter"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func main() {
-	configFile := flag.String("c", "config/config,yaml", "Path of the config file")
+	configFile := flag.String("c", "config/config.yaml", "Path of the config file")
 	flag.Parse()
+
+	absPath, _ := filepath.Abs(*configFile)
 
 	mux := defaultMux()
 
 	// Build the YAMLHandler using the mapHandler as the
 	// fallback
 
-	file, err := os.Open(*configFile)
+	file, err := os.Open(absPath)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to Open file %s", absPath)
 	}
 	defer file.Close()
 	yaml, err := ioutil.ReadAll(file)
